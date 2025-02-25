@@ -12,7 +12,6 @@ if (session_status() == PHP_SESSION_NONE) {
     <form action="login_db.php" method="POST">
         <div class="card shadow-lg p-4 bg-login text-white" style="width: 400px;">
             <h2 class="text-center">ยินดีต้อนรับ</h2>
-            <h2 class="text-center">ยินดีต้อนรับ2</h2>
             <p class="text-center">กรุณาเข้าสู่ระบบเพื่อดำเนินการต่อ</p>
 
             <!-- แสดง Error หรือ Success -->
