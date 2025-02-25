@@ -1,0 +1,231 @@
+/* ตั้งค่าฟอนต์ */
+body {
+  font-family: 'Kanit', sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* หัวเว็บไซต์ */
+.topic {
+  background: #4CAF50; /* สีเขียวเข้ม */
+  color: white;
+  padding: 20px;
+  font-size: 2rem;
+  text-align: center;
+  margin: 0;
+  width: 100%;  /* ขยายเต็มจอ */
+  border-radius: 0; /* เอาขอบมนออก */
+}
+
+/* เมนูหลัก */
+.menu {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  background: #333; /* สีเทาเข้ม */
+  display: flex;
+  justify-content: center;
+  /* border-radius: 10px; */
+}
+
+.menu li {
+  display: inline;
+  padding: 15px 20px;
+}
+
+
+.menu li a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.menu li a:hover {
+  color: #FFD700; /* สีทอง */
+  transform: scale(1.1);
+}
+
+/* ปรับสีปุ่มตะกร้า */
+.btn-cart {
+  background: #4CAF50; /* สีเขียว */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.btn-cart:hover {
+  background: #388E3C; /* สีเขียวเข้มขึ้น */
+  transform: scale(1.05);
+}
+
+/* ปรับสไตล์รูปภาพ */
+.content img {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 10px;
+  margin-top: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* รองรับมือถือ */
+@media screen and (max-width: 768px) {
+  h1 {
+      width: 90%;
+      font-size: 1.8rem;
+  }
+
+  .menu {
+      flex-direction: column;
+  }
+
+  .menu li {
+      text-align: center;
+      padding: 10px;
+  }
+
+  .content {
+      width: 95%;
+  }
+}
+
+/* ✅ ตั้งค่ากล่องสมัครสมาชิกให้เหมือนล็อกอิน */
+.register-container {
+  background-color: #fff; /* พื้นหลังสีขาว */
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 400px;
+}
+
+/* ข้อความใต้หัวข้อ */
+.subtext {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* ช่องกรอกข้อมูล */
+.input-group {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* ✅ ปรับกล่องสมัครสมาชิกให้ดูสมดุล */
+.register-container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 400px;
+}
+
+/* ปุ่มสมัครสมาชิก */
+.register-button {
+  width: 100%;
+  background-color: #4CAF50; /* สีเขียว */
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.register-button:hover {
+  background-color: #388E3C; /* สีเขียวเข้มขึ้น */
+}
+
+/* ปุ่มกลับสู่หน้าหลัก */
+.back-home {
+  margin-top: 15px;
+}
+
+.back-home-button {
+  display: inline-block;
+  background-color: #fff;
+  color: #4CAF50;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
+  border: 2px solid #4CAF50;
+}
+
+.back-home-button:hover {
+  background-color: #4CAF50;
+  color: white;
+}
+
+/* ลิงก์สร้างบัญชี */
+.create-account {
+  margin-top: 15px;
+}
+
+.create-account p {
+  font-size: 14px;
+  color: #333;
+}
+
+.create-account a {
+  color: #5a67d8;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.create-account a:hover {
+  text-decoration: underline;
+}
+
+/* ✅ จัด label ให้ชิดซ้าย */
+.text-start {
+  text-align: left !important;
+}
+
+.nav-link.active {
+  background-color: #FFD700; /* สีทอง */
+  color: black !important;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.bg-login {
+  background-color: #4CAF50 !important; /* ใช้สีเขียวที่กำหนด */
+}
+
+.text-gold {
+  color: #FFD700 !important; /* ใช้สีทองที่ต้องการ */
+}
+
+.btn-home:hover {
+  background-color: black !important;
+  color: #FFD700 !important;
+}
+
