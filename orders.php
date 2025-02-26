@@ -44,6 +44,10 @@ require_once 'orders_db.php'; // ✅ นำเข้าไฟล์ประม�
                                 <span class="badge bg-info">กำลังตรวจสอบ</span>
                             <?php elseif ($order['status'] == 'paid'): ?>
                                 <span class="badge bg-success">ชำระเงินแล้ว</span>
+                            <?php elseif ($order['status'] == 'shipped'): ?>
+                                <span class="badge bg-success">จัดส่งแล้ว</span>
+                            <?php elseif ($order['status'] == 'delivered'): ?>
+                                <span class="badge bg-success">จัดส่งสำเร็จ</span>
                             <?php else: ?>
                                 <span class="badge bg-secondary"><?= htmlspecialchars($order['status']); ?></span>
                             <?php endif; ?>
@@ -53,8 +57,9 @@ require_once 'orders_db.php'; // ✅ นำเข้าไฟล์ประม�
                         <td><?= $order['created_at']; ?></td>
                         <td>
                             <?php if ($order['status'] == 'pending'): ?>
-                                <a href="checkout.php" class="btn btn-sm btn-primary">🔗 ไปชำระเงิน</a>
+                                <a href="invoice.php?order_id=<?= $order['id']; ?>" class="btn btn-sm btn-primary">🔗 ไปชำระเงิน</a>
                             <?php endif; ?>
+
                             <?php if ($order['status'] != 'paid'): ?>
                                 <!-- ปุ่มยกเลิกคำสั่งซื้อ (ใช้งานได้) -->
                                 <a href="cancel_order.php?order_id=<?= $order['id']; ?>"

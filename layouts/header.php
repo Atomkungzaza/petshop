@@ -69,7 +69,7 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest'; // ถ้าย�
                         <a class="nav-link <?= ($current_page == 'orders.php') ? 'active' : ''; ?>" href="/petshop/orders.php">คำสั่งซื้อ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= ($current_page == 'tracking.php') ? 'active' : ''; ?>" href="/petshop/tracking.php">ติดตามสินค้า</a>
+                        <a class="nav-link <?= ($current_page == 'tracking.php') ? 'active' : ''; ?>" href="/petshop/order_tracking.php">ติดตามสินค้า</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'contact.php') ? 'active' : ''; ?>" href="/petshop/contact.php">ติดต่อ</a>
