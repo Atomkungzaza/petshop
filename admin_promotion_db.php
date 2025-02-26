@@ -1,3 +1,5 @@
+
+
 <?php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -89,4 +91,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_promotion'])) {
     header("location: admin_promotions.php");
     exit();
 }
+// แก้ไขโปรโมชั่น
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_promotion'])) {
+    $promotion_id = intval($_POST['promotion_id']);
+    $title = trim($_POST['title']);
+    $description = trim($_POST['description']);
+    $product_id = intval($_POST['product_ids']);
+    $discount_percentage = floatval($_POST['discount_percentage']);
+    $start_date = trim($_POST['start_date']);
+    $end_date = trim($_POST['end_date']);
+
+    // ตรวจสอบความถูกต้องของข้อมูล
+    if (empty($title) || empty($description) || empty($product_id) || empty($discount_percentage) || empty($start_date) || empty($end_date)) {
+        $_SESSION['error'] = "กรุณากรอกข้อมูลให้ครบถ้วน";
+        header("location: admin_promotions.php");
+        exit();
+    }
+    if ($discount_percentage < 0 || $discount_percentage > 100) {
+        $_SESSION['error'] = "กรุณาระบุส่วนลดให้อยู่ในช่วง 0-100%";
+        header("location: admin_promotions.php");
+        exit();
+    }
+    if ($start_date >= $end_date) {
+        $_SESSION['error'] = "วันที่เริ่มต้นต้องน้อยกว่าวันที่สิ้นสุด";
+        header("location: admin_promotions.php");
+        exit();
+    }
+
+    try {
+        // เริ่ม transaction
+        $conn->beginTransaction();
+
+        // อัปเดตข้อมูลโปรโมชั่น
+        $stmt = $conn->prepare("UPDATE promotions SET title = ?, description = ?, discount_percentage = ?, start_date = ?, end_date = ? WHERE id = ?");
+        $stmt->execute([$title, $description, $discount_percentage, $start_date, $end_date, $promotion_id]);
+
+        // อัปเดตความสัมพันธ์ในตาราง product_promotions
+        $stmt = $conn->prepare("UPDATE product_promotions SET product_id = ? WHERE promotion_id = ?");
+        $stmt->execute([$product_id, $promotion_id]);
+
+        $conn->commit();
+        $_SESSION['success'] = "แก้ไขโปรโมชั่นสำเร็จ!";
+    } catch (PDOException $e) {
+        $conn->rollBack();
+        $_SESSION['error'] = "เกิดข้อผิดพลาด: " . $e->getMessage();
+    }
+    header("location: admin_promotions.php");
+    exit();
+}
+
 ?>

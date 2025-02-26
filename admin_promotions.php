@@ -1,3 +1,4 @@
+
 <?php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -76,44 +77,106 @@ if (!isset($promotions) || !is_array($promotions)) {
         <button type="submit" name="add_promotion" class="btn btn-success w-100">เพิ่มโปรโมชั่น</button>
     </form>
 
+    <?php
+// ถ้ามีการส่ง edit ID มาให้โหลดข้อมูลโปรโมชั่นที่ต้องการแก้ไข
+if (isset($_GET['edit'])) {
+    $promotion_id = intval($_GET['edit']);
+    // ดึงข้อมูลโปรโมชั่นจากฐานข้อมูล
+    $stmt = $conn->prepare("SELECT p.*, pr.product_id 
+                            FROM promotions p
+                            LEFT JOIN product_promotions pr ON p.id = pr.promotion_id 
+                            WHERE p.id = ?");
+    $stmt->execute([$promotion_id]);
+    $promotion = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+?>
+
+<?php if (isset($promotion)): ?>
+    <h2 class="mb-3">แก้ไขโปรโมชั่น</h2>
+    <form method="POST" action="admin_promotion_db.php">
+        <input type="hidden" name="promotion_id" value="<?= $promotion['id']; ?>">
+        <div class="mb-3">
+            <label class="form-label">ชื่อโปรโมชั่น</label>
+            <input type="text" name="title" class="form-control" value="<?= htmlspecialchars($promotion['title']); ?>" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">รายละเอียดโปรโมชั่น</label>
+            <input type="text" name="description" class="form-control" value="<?= htmlspecialchars($promotion['description']); ?>" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">สินค้าที่ลดราคา</label>
+            <select name="product_ids" class="form-control" required>
+                <option value="">-- เลือกสินค้าที่จะลดราคา --</option>
+                <?php foreach ($products as $product): ?>
+                    <option value="<?= $product['id']; ?>" <?= $product['id'] == $promotion['product_id'] ? 'selected' : ''; ?>>
+                        <?= htmlspecialchars($product['name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">ส่วนลด (%)</label>
+            <input type="number" name="discount_percentage" step="0.01" class="form-control" value="<?= $promotion['discount_percentage']; ?>" required>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">เริ่มวันที่</label>
+                <input type="date" name="start_date" class="form-control" value="<?= $promotion['start_date']; ?>" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">หมดวันที่</label>
+                <input type="date" name="end_date" class="form-control" value="<?= $promotion['end_date']; ?>" required>
+            </div>
+        </div>
+        <button type="submit" name="edit_promotion" class="btn btn-primary w-100">แก้ไขโปรโมชั่น</button>
+    </form>
+<?php endif; ?>
+
+
     <hr class="my-4">
 
     <h2 class="mb-3">รายการโปรโมชั่น</h2>
 
-    <!-- ตารางแสดงโปรโมชั่น -->
-    <table class="table table-bordered table-hover">
-        <thead class="table-dark">
+<!-- ตารางแสดงโปรโมชั่น -->
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>ชื่อโปรโมชั่น</th>
+            <th>รายละเอียด</th>
+            <th>สินค้าที่ลดราคา</th>
+            <th>ส่วนลด (%)</th>
+            <th>เริ่มวันที่</th>
+            <th>หมดวันที่</th>
+            <th>แก้ไข</th>
+            <th>ลบ</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($promotions as $index => $promotion): ?>
             <tr>
-                <th>#</th>
-                <th>ชื่อโปรโมชั่น</th>
-                <th>รายละเอียด</th>
-                <th>สินค้าที่ลดราคา</th>
-                <th>ส่วนลด (%)</th>
-                <th>เริ่มวันที่</th>
-                <th>หมดวันที่</th>
-                <th>ลบ</th>
+                <td><?= $index + 1; ?></td>
+                <td class="text-start"><?= htmlspecialchars($promotion['title']); ?></td>
+                <td class="text-start"><?= htmlspecialchars($promotion['description']); ?></td>
+                <td class="text-start"><?= htmlspecialchars($promotion['product_name']); ?></td>
+                <td><?= number_format($promotion['discount_percentage'], 2); ?>%</td>
+                <td><?= htmlspecialchars($promotion['start_date']); ?></td>
+                <td><?= htmlspecialchars($promotion['end_date']); ?></td>
+                <td>
+                    <!-- เพิ่มปุ่มแก้ไข -->
+                    <a href="admin_promotions.php?edit=<?= $promotion['id']; ?>" class="btn btn-warning btn-sm">แก้ไข</a>
+                </td>
+                <td>
+                    <form method="POST" action="admin_promotion_db.php" onsubmit="return confirm('คุณต้องการลบโปรโมชั่นนี้ใช่หรือไม่?');">
+                        <input type="hidden" name="promotion_id" value="<?= $promotion['id']; ?>">
+                        <button type="submit" name="delete_promotion" class="btn btn-danger btn-sm">ลบ</button>
+                    </form>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($promotions as $index => $promotion): ?>
-                <tr>
-                    <td><?= $index + 1; ?></td>
-                    <td class="text-start"><?= htmlspecialchars($promotion['title']); ?></td>
-                    <td class="text-start"><?= htmlspecialchars($promotion['description']); ?></td>
-                    <td class="text-start"><?= htmlspecialchars($promotion['product_name']); ?></td>
-                    <td><?= number_format($promotion['discount_percentage'], 2); ?>%</td>
-                    <td><?= htmlspecialchars($promotion['start_date']); ?></td>
-                    <td><?= htmlspecialchars($promotion['end_date']); ?></td>
-                    <td>
-                        <form method="POST" action="admin_promotion_db.php" onsubmit="return confirm('คุณต้องการลบโปรโมชั่นนี้ใช่หรือไม่?');">
-                            <input type="hidden" name="promotion_id" value="<?= $promotion['id']; ?>">
-                            <button type="submit" name="delete_promotion" class="btn btn-danger btn-sm">ลบ</button>
-                        </form>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

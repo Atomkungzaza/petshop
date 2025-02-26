@@ -13,56 +13,13 @@ $news = [];
 try {
     // คำสั่ง SQL สำหรับดึงข้อมูลข่าวสารทั้งหมดจากฐานข้อมูล
     $sql = "SELECT * FROM news ORDER BY created_at DESC";
-    $stmt = $conn->prepare($sql); // ใช้ $conn แทน $pdo
+    $stmt = $conn->prepare($sql);
     $stmt->execute();
 
     // เก็บผลลัพธ์ทั้งหมดในตัวแปร $news
     $news = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล: " . $e->getMessage();
-}
-
-// ตรวจสอบการรับค่าจากฟอร์มการเพิ่มข่าว
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // รับข้อมูลจากฟอร์ม
-    $title = $_POST['title'];
-    $content = $_POST['content'];
-    
-    // การจัดการไฟล์ภาพ
-    $image = $_FILES['image']['name'];
-    $image_tmp = $_FILES['image']['tmp_name'];
-    $upload_dir = 'uploads/news_images/';
-    $image_path = $upload_dir . uniqid() . '-' . basename($image);
-
-    // ตรวจสอบว่าโฟลเดอร์ปลายทางมีอยู่หรือไม่
-    if (!is_dir($upload_dir)) {
-        mkdir($upload_dir, 0777, true);
-    }
-
-    // ย้ายไฟล์ภาพไปยังโฟลเดอร์ที่กำหนด
-    if (move_uploaded_file($image_tmp, $image_path)) {
-        try {
-            // คำสั่ง SQL สำหรับเพิ่มข้อมูลข่าวสาร
-            $sql = "INSERT INTO news (title, content, image_url, created_at) VALUES (:title, :content, :image_url, NOW())";
-            $stmt = $conn->prepare($sql); // ใช้ $conn แทน $pdo
-
-            // Bind ค่าต่างๆ
-            $stmt->bindParam(':title', $title);
-            $stmt->bindParam(':content', $content);
-            $stmt->bindParam(':image_url', $image_path);
-
-            // Execute คำสั่ง SQL
-            $stmt->execute();
-
-            // รีไดเรคไปยังหน้าแสดงผลข่าวสาร
-            header("Location: admin_news.php");
-            exit();
-        } catch (PDOException $e) {
-            echo "เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล: " . $e->getMessage();
-        }
-    } else {
-        echo "การอัพโหลดรูปภาพไม่สำเร็จ.";
-    }
 }
 ?>
 
@@ -72,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <h2>จัดการข่าวสาร</h2>
 
     <!-- ฟอร์มเพิ่มข่าวสารใหม่ -->
-    <form action="admin_news.php" method="POST" enctype="multipart/form-data">
+    <form action="admin_news_db.php" method="POST" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="title" class="form-label">หัวข้อข่าวสาร</label>
             <input type="text" class="form-control" id="title" name="title" required>
@@ -97,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <th>เนื้อหา</th>
                 <th>รูปภาพ</th>
                 <th>วันที่</th>
+                <th>จัดการ</th>
             </tr>
         </thead>
         <tbody>
@@ -107,6 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <td><?= substr($new['content'], 0, 50); ?>...</td>
                     <td><img src="<?= $new['image_url']; ?>" alt="image" width="100"></td>
                     <td><?= $new['created_at']; ?></td>
+                    <td>
+                        <!-- ปุ่มแก้ไข (ตัวอย่างลิงก์ไปยังหน้า edit_news.php) -->
+                        <a href="edit_news.php?id=<?= $new['id']; ?>" class="btn btn-sm btn-warning">แก้ไข</a>
+                        <!-- ปุ่มลบ (ลิงก์ไปยัง admin_news_db.php?action=delete&id=...) -->
+                        <a href="admin_news_db.php?action=delete&id=<?= $new['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบข่าวนี้?');">ลบ</a>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

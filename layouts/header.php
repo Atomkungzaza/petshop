@@ -31,6 +31,9 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest'; // ถ้าย�
                         <a class="nav-link <?= ($current_page == 'admin_dashboard.php') ? 'active' : ''; ?>" href="/petshop/admin_dashboard.php">แดชบอร์ด</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link <?= ($current_page == 'admin_user.php') ? 'active' : ''; ?>" href="/petshop/admin_user.php">จัดการสมาชิก</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'admin_products.php') ? 'active' : ''; ?>" href="/petshop/admin_products.php">จัดการสินค้า</a>
                     </li>
                     <li class="nav-item">
@@ -39,7 +42,6 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest'; // ถ้าย�
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'admin_news.php') ? 'active' : ''; ?>" href="/petshop/admin_news.php">จัดการข่าวสาร</a>
                     </li>
-                    <!-- เมนูติดตามสินค้า สำหรับแอดมิน -->
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'admin_tracking.php') ? 'active' : ''; ?>" href="/petshop/admin_tracking.php">ติดตามสินค้า</a>
                     </li>
@@ -48,19 +50,15 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest'; // ถ้าย�
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'index.php') ? 'active' : ''; ?>" href="/petshop/index.php">หน้าแรก</a>
                     </li>
-                    <!-- เมนูสัตว์เลี้ยง -->
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'products.php' && isset($_GET['category_id']) && $_GET['category_id'] == 1) ? 'active' : ''; ?>" href="products.php?category_id=1">สัตว์เลี้ยง</a>
                     </li>
-                    <!-- เมนูอาหาร/ยา -->
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'products.php' && isset($_GET['category_id']) && $_GET['category_id'] == 2) ? 'active' : ''; ?>" href="products.php?category_id=2">อาหาร/ยา</a>
                     </li>
-                    <!-- เมนูอุปกรณ์ -->
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'products.php' && isset($_GET['category_id']) && $_GET['category_id'] == 3) ? 'active' : ''; ?>" href="products.php?category_id=3">อุปกรณ์</a>
                     </li>
-                    <!-- เมนูข่าวสารสำหรับ Customer -->
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'news.php') ? 'active' : ''; ?>" href="/petshop/news.php">ข่าวสาร</a>
                     </li>
@@ -70,31 +68,30 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest'; // ถ้าย�
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'orders.php') ? 'active' : ''; ?>" href="/petshop/orders.php">คำสั่งซื้อ</a>
                     </li>
-                    <!-- เมนูติดตามสินค้า สำหรับลูกค้า -->
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'tracking.php') ? 'active' : ''; ?>" href="/petshop/tracking.php">ติดตามสินค้า</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'contact.php') ? 'active' : ''; ?>" href="/petshop/contact.php">ติดต่อ</a>
                     </li>
+                    <!-- ลิงก์ไปยังหน้าจัดการโปรไฟล์สำหรับผู้ใช้ที่ล็อกอิน -->
+                    <li class="nav-item">
+                        <a class="nav-link <?= ($current_page == 'profile.php') ? 'active' : ''; ?>" href="/petshop/profile.php">จัดการโปรไฟล์</a>
+                    </li>
                 <?php else: ?>
                     <!-- ✅ เมนูสำหรับผู้เยี่ยมชม (Guest) -->
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'index.php') ? 'active' : ''; ?>" href="/petshop/index.php">หน้าแรก</a>
                     </li>
-                    <!-- เมนูสัตว์เลี้ยง -->
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'products.php' && isset($_GET['category_id']) && $_GET['category_id'] == 1) ? 'active' : ''; ?>" href="products.php?category_id=1">สัตว์เลี้ยง</a>
                     </li>
-                    <!-- เมนูอาหาร/ยา -->
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'products.php' && isset($_GET['category_id']) && $_GET['category_id'] == 2) ? 'active' : ''; ?>" href="products.php?category_id=2">อาหาร/ยา</a>
                     </li>
-                    <!-- เมนูอุปกรณ์ -->
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'products.php' && isset($_GET['category_id']) && $_GET['category_id'] == 3) ? 'active' : ''; ?>" href="products.php?category_id=3">อุปกรณ์</a>
                     </li>
-                    <!-- เมนูข่าวสารสำหรับ Guest -->
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'news.php') ? 'active' : ''; ?>" href="/petshop/news.php">ข่าวสาร</a>
                     </li>
@@ -106,7 +103,7 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest'; // ถ้าย�
                 <?php if (isset($_SESSION['username'])): ?>
                     <!-- ✅ ถ้าผู้ใช้ล็อกอินแล้ว -->
                     <li class="nav-item ms-4">
-                        <span class="nav-link text-white fw-bold">👤 <?= $_SESSION['username']; ?></span>
+                        <a class="nav-link text-white fw-bold">👤 <?= $_SESSION['username']; ?></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link btn btn-danger text-white px-3 py-1" href="/petshop/logout.php">ออกจากระบบ</a>
@@ -121,4 +118,5 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest'; // ถ้าย�
         </header>
     <?php endif; ?>
 </body>
+
 </html>
