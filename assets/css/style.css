@@ -229,3 +229,105 @@ body {
   color: #FFD700 !important;
 }
 
+.timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  padding: 0;
+  list-style: none;
+  position: relative;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 25%;   /* ปรับจาก 50% เป็น 45% เพื่อขยับเส้นขึ้น */
+  left: 5%;
+  width: 90%; /* ความยาวเส้น */
+  height: 4px;
+  background: #e0e0e0;
+  z-index: 1;
+  transform: translateY(-50%);
+}
+
+.timeline-item {
+  text-align: center;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.timeline-item .circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  margin: 0 auto;
+  position: relative;
+  z-index: 3;
+  transition: background 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+}
+
+.timeline-item.completed .circle {
+  background: #4caf50;
+}
+
+.timeline-item.completed .circle::after {
+  content: '✔';
+  color: white;
+  font-weight: bold;
+}
+
+.timeline-item.active .circle {
+  background: #4caf50;  /* เปลี่ยนจากสีฟ้าเป็นสีเขียว */
+  color: white;
+}
+
+.timeline-item.active .circle::after {
+  content: '✔';          /* แสดงเครื่องหมายถูก */
+  color: white;
+  font-weight: bold;
+}
+
+.timeline-item span {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.invoice {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+}
+.invoice h2 {
+  text-align: center;
+}
+.invoice table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+.invoice table, .invoice th, .invoice td {
+  border: 1px solid #ccc;
+}
+.invoice th, .invoice td {
+  padding: 10px;
+  text-align: center;
+}
+.invoice .total {
+  text-align: right;
+  font-weight: bold;
+}
+.invoice .total-amount {
+  color: green;
+  font-size: 1.5em;
+}
