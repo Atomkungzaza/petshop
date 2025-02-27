@@ -60,9 +60,6 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest'; // ถ้าย�
                         <a class="nav-link <?= ($current_page == 'products.php' && isset($_GET['category_id']) && $_GET['category_id'] == 3) ? 'active' : ''; ?>" href="products.php?category_id=3">อุปกรณ์</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= ($current_page == 'news.php') ? 'active' : ''; ?>" href="/petshop/news.php">ข่าวสาร</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'cart.php') ? 'active' : ''; ?>" href="/petshop/cart.php">ตะกร้า</a>
                     </li>
                     <li class="nav-item">
@@ -91,9 +88,6 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest'; // ถ้าย�
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'products.php' && isset($_GET['category_id']) && $_GET['category_id'] == 3) ? 'active' : ''; ?>" href="products.php?category_id=3">อุปกรณ์</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?= ($current_page == 'news.php') ? 'active' : ''; ?>" href="/petshop/news.php">ข่าวสาร</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page == 'contact.php') ? 'active' : ''; ?>" href="/petshop/contact.php">ติดต่อ</a>

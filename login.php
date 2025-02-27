@@ -1,4 +1,4 @@
-z<!-- โค้ดในไฟล์ login.php -->
+<!-- โค้ดในไฟล์ login.php -->
 
 <?php
 if (session_status() == PHP_SESSION_NONE) {

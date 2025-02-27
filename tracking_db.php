@@ -1,6 +1,9 @@
 <?php
-session_start();
-include 'config/db.php';
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+require_once 'config/db.php';
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['order_id'], $_POST['status'])) {
     $order_id = $_POST['order_id'];

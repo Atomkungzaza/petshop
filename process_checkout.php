@@ -1,87 +1,49 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
 require_once 'config/db.php';
-
-// ตรวจสอบว่าผู้ใช้ล็อกอินหรือไม่
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['error'] = "กรุณาเข้าสู่ระบบก่อนทำการสั่งซื้อ";
-    header("location: login.php");
-    exit();
-}
-
-// ตรวจสอบว่ามีสินค้าในตะกร้าหรือไม่
-if (empty($_SESSION['cart'])) {
-    $_SESSION['error'] = "ไม่มีสินค้าในตะกร้า กรุณาเลือกสินค้าก่อน";
-    header("location: cart.php");
-    exit();
-}
-
-$user_id = $_SESSION['user_id'];
-$total_price = 0;
-$order_items = [];
-
-$ids = implode(',', array_keys($_SESSION['cart']));
-
-try {
-    // ดึงข้อมูลสินค้าพร้อมโปรโมชัน
-    $stmt = $conn->prepare("
-        SELECT p.*, 
-               IFNULL(pr.discount_percentage, 0) AS discount_percentage 
-        FROM products p
-        LEFT JOIN product_promotions pp ON p.id = pp.product_id
-        LEFT JOIN promotions pr ON pp.promotion_id = pr.id 
-             AND CURDATE() BETWEEN pr.start_date AND pr.end_date
-        WHERE p.id IN ($ids)
-    ");
-    $stmt->execute();
-    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // คำนวณราคารวมและเตรียมรายการสินค้าในคำสั่งซื้อ
-    foreach ($products as $product) {
-        $product_id = $product['id'];
-        $quantity = $_SESSION['cart'][$product_id];
-        $original_price = $product['price'];
-        $discount_percentage = isset($product['discount_percentage']) ? $product['discount_percentage'] : 0;
-        $discount_amount = ($discount_percentage > 0) ? ($original_price * ($discount_percentage / 100)) : 0;
-        $final_price = $original_price - $discount_amount;
-        $subtotal = $final_price * $quantity;
-        $total_price += $subtotal;
-        $order_items[] = [
-            'product_id' => $product_id,
-            'quantity'   => $quantity,
-            'price'      => $final_price
-        ];
-    }
-
-    // บันทึกคำสั่งซื้อ (status เริ่มต้นเป็น 'pending')
-    $stmt = $conn->prepare("INSERT INTO orders (user_id, total_price, status, created_at) VALUES (:user_id, :total_price, 'pending', NOW())");
-    $stmt->bindParam(":user_id", $user_id);
-    $stmt->bindParam(":total_price", $total_price);
-    $stmt->execute();
-    $order_id = $conn->lastInsertId();
-
-    // บันทึกรายการสินค้าในคำสั่งซื้อ
-    $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (:order_id, :product_id, :quantity, :price)");
-    foreach ($order_items as $item) {
-        $stmt->bindParam(":order_id", $order_id);
-        $stmt->bindParam(":product_id", $item['product_id']);
-        $stmt->bindParam(":quantity", $item['quantity']);
-        $stmt->bindParam(":price", $item['price']);
-        $stmt->execute();
-    }
-
-    // ล้างตะกร้าหลังจากสั่งซื้อสำเร็จ
-    unset($_SESSION['cart']);
-
-    $_SESSION['success'] = "ทำรายการสั่งซื้อสำเร็จ! หมายเลขออเดอร์ของคุณคือ #" . $order_id;
-    header("location: orders.php");
-    exit();
-
-} catch (PDOException $e) {
-    $_SESSION['error'] = "เกิดข้อผิดพลาดในการสั่งซื้อ: " . $e->getMessage();
-    header("location: cart.php");
-    exit();
-}
+require_once 'checkout_db.php'; // ✅ นำเข้าไฟล์ประมวลผล
 ?>
+
+<?php include 'layouts/header.php'; ?>
+
+<div class="container mt-4">
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success"><?= $_SESSION['success']; unset($_SESSION['success']); ?></div>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+    <?php endif; ?>
+    <h2>รายละเอียดการชำระเงิน</h2>
+    <p>ยอดรวมทั้งหมด: <strong><?= number_format($total_price, 2); ?> บาท</strong></p>
+
+    <!-- ✅ แสดงรายการสินค้า -->
+    <ul>
+        <?php foreach ($order_items as $item): ?>
+            <li><?= htmlspecialchars($item['name']); ?> x <?= $item['quantity']; ?> ชิ้น</li>
+        <?php endforeach; ?>
+    </ul>
+
+    <?php if ($order_status == 'paid'): ?>
+        <!-- ✅ แสดงข้อความหากชำระเงินแล้ว -->
+        <div class="alert alert-success">✅ คำสั่งซื้อนี้ชำระเงินเรียบร้อยแล้ว</div>
+        <a href="orders.php" class="btn btn-primary w-100">ดูคำสั่งซื้อของฉัน</a>
+    <?php else: ?>
+        <!-- ✅ แสดงฟอร์มเลือกวิธีการชำระเงินหากยังไม่ได้จ่าย -->
+        <form action="process_payment.php" method="POST">
+            <input type="hidden" name="order_id" value="<?= $order_id; ?>">
+            <input type="hidden" name="total_price" value="<?= $total_price; ?>">
+
+            <label>เลือกวิธีการชำระเงิน:</label>
+            <select name="payment_method" class="form-control" required>
+                <option value="">-- เลือกวิธีการชำระเงิน --</option>
+                <option value="qr_code">QR Code</option>
+                <option value="credit_card">บัตรเครดิต</option>
+                <option value="bank_transfer">โอนเงินผ่านธนาคาร</option>
+            </select>
+
+            <button type="submit" class="btn btn-success w-100 mt-3">ยืนยันการชำระเงิน</button>
+        </form>
+    <?php endif; ?>
+</div>
+
+<?php include 'layouts/footer.php'; ?>

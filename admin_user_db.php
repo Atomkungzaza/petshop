@@ -38,7 +38,18 @@ if ($action === 'delete') {
         $address = $_POST['address'];
         $role = $_POST['role'];
 
-        $query = "UPDATE users SET username = :username, email = :email, password = :password, full_name = :full_name, phone = :phone, address = :address, role = :role WHERE id = :id";
+        // ตรวจสอบการอัปโหลดไฟล์รูปภาพ
+        $image = null;
+        if ($_FILES['image']['error'] == UPLOAD_ERR_OK) {
+            $image_name = $_FILES['image']['name'];
+            $image_tmp = $_FILES['image']['tmp_name'];
+            $image_ext = pathinfo($image_name, PATHINFO_EXTENSION);
+            $image_new_name = uniqid() . '.' . $image_ext;
+            move_uploaded_file($image_tmp, 'uploads/' . $image_new_name);
+            $image = $image_new_name;
+        }
+
+        $query = "UPDATE users SET username = :username, email = :email, password = :password, full_name = :full_name, phone = :phone, address = :address, role = :role, image = :image WHERE id = :id";
         $stmt = $conn->prepare($query);
         $stmt->execute([
             ':id' => $user_id,
@@ -48,7 +59,8 @@ if ($action === 'delete') {
             ':full_name' => $full_name,
             ':phone' => $phone,
             ':address' => $address,
-            ':role' => $role
+            ':role' => $role,
+            ':image' => $image
         ]);
         header('Location: admin_user.php');
         exit;
@@ -64,7 +76,18 @@ if ($action === 'delete') {
         $address = $_POST['address'];
         $role = $_POST['role'];
 
-        $query = "INSERT INTO users (username, email, password, full_name, phone, address, role) VALUES (:username, :email, :password, :full_name, :phone, :address, :role)";
+        // ตรวจสอบการอัปโหลดไฟล์รูปภาพ
+        $image = null;
+        if ($_FILES['image']['error'] == UPLOAD_ERR_OK) {
+            $image_name = $_FILES['image']['name'];
+            $image_tmp = $_FILES['image']['tmp_name'];
+            $image_ext = pathinfo($image_name, PATHINFO_EXTENSION);
+            $image_new_name = uniqid() . '.' . $image_ext;
+            move_uploaded_file($image_tmp, 'uploads/' . $image_new_name);
+            $image = $image_new_name;
+        }
+
+        $query = "INSERT INTO users (username, email, password, full_name, phone, address, role, image) VALUES (:username, :email, :password, :full_name, :phone, :address, :role, :image)";
         $stmt = $conn->prepare($query);
         $stmt->execute([
             ':username' => $username,
@@ -73,7 +96,8 @@ if ($action === 'delete') {
             ':full_name' => $full_name,
             ':phone' => $phone,
             ':address' => $address,
-            ':role' => $role
+            ':role' => $role,
+            ':image' => $image
         ]);
         header('Location: admin_user.php');
         exit;
