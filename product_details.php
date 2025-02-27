@@ -1,8 +1,10 @@
 <?php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 require_once 'config/db.php';
+
 
 // ตรวจสอบว่ามี id ส่งมา
 $product_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -90,7 +92,7 @@ include 'layouts/header.php';
                 <button class="btn btn-secondary" disabled>สินค้าหมด</button>
             <?php endif; ?>
 
-            <a href="products.php?category_id=<?= $product['id']; ?>" class="btn btn-primary mt-3">ย้อนกลับ</a>
+            <a href="products.php" class="btn btn-primary mt-3">ย้อนกลับ</a>
         </div>
     </div>
 </div>

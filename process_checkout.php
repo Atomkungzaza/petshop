@@ -72,6 +72,18 @@ try {
         $stmt->execute();
     }
 
+    // ลดจำนวนสินค้าในฐานข้อมูลหลังจากการสั่งซื้อ
+    foreach ($order_items as $item) {
+        $stmt = $conn->prepare("
+            UPDATE products 
+            SET stock_quantity = stock_quantity - :quantity
+            WHERE id = :product_id
+        ");
+        $stmt->bindParam(":quantity", $item['quantity']);
+        $stmt->bindParam(":product_id", $item['product_id']);
+        $stmt->execute();
+    }
+
     // ล้างตะกร้าหลังจากสั่งซื้อสำเร็จ
     unset($_SESSION['cart']);
 

@@ -1,6 +1,10 @@
 <?php
-session_start();
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 require_once 'config/db.php';
+
 
 // ✅ ตรวจสอบว่าผู้ใช้ล็อกอินหรือไม่
 if (!isset($_SESSION['user_id'])) {
@@ -33,6 +37,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['order_id'], $_POST['to
         $stmt->bindParam(":order_id", $order_id);
         $stmt->bindParam(":status", $status);
         $stmt->execute();
+
+        // ✅ ลดจำนวนสินค้าในฐานข้อมูลตามที่สั่งซื้อ
+        foreach ($_SESSION['cart'] as $product_id => $quantity) {
+            // ตรวจสอบจำนวนสินค้าที่จะลดในฐานข้อมูล
+            $stmt = $conn->prepare("UPDATE products SET stock_quantity = stock_quantity - :quantity WHERE id = :product_id");
+            $stmt->bindParam(":quantity", $quantity, PDO::PARAM_INT);
+            $stmt->bindParam(":product_id", $product_id, PDO::PARAM_INT);
+            $stmt->execute();
+        }
+
+        // ✅ เคลียร์ตะกร้าสินค้า
+        unset($_SESSION['cart']);
 
         $conn->commit();
         $_SESSION['success'] = "ชำระเงินสำเร็จ!";
