@@ -46,6 +46,11 @@ if (session_status() == PHP_SESSION_NONE) {
                 <p>หากไม่มีบัญชี <a href="register.php" class="text-gold">สร้างบัญชี</a></p>
             </div>
 
+            <!-- เพิ่มลิงก์สำหรับรีเซ็ตรหัสผ่าน -->
+            <div class="text-center mt-2">
+                <a href="reset_password.php" class="text-danger">ลืมรหัสผ่าน?</a>
+            </div>
+
             <!-- ปุ่มกลับสู่หน้าหลัก -->
             <div class="text-center mt-3">
                 <a href="index.php" class="btn btn-secondary btn-home">← กลับสู่หน้าหลัก</a>

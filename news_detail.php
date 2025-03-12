@@ -43,7 +43,7 @@ if (isset($_GET['id'])) {
     <p><strong>วันที่:</strong> <?= $news['created_at']; ?></p>
     <img src="<?= $news['image_url']; ?>" class="img-fluid" alt="news image">
     <p class="mt-4"><?= $news['content']; ?></p>
-    <a href="news.php" class="btn btn-secondary">กลับไปยังหน้าข่าวสาร</a>
+
 </div>
 
 <?php include 'layouts/footer.php'; ?>

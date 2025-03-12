@@ -60,29 +60,18 @@ include 'layouts/header.php';
                     <input type="file" class="form-control" id="image" name="image">
                 </div>
                 <button type="submit" class="btn btn-primary" name="update_profile">อัปเดตข้อมูล</button>
-                <a href="#" class="btn btn-danger ms-3" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">ลบบัญชี</a>
-            </form>
-        </div>
-    </div>
-</div>
+                <button type="button" class="btn btn-danger ms-3" onclick="confirmDelete(event)">ลบบัญชี</button>
 
-<!-- Modal ยืนยันการลบบัญชี -->
-<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteAccountModalLabel">ยืนยันการลบบัญชี</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีของคุณ? การลบจะไม่สามารถกู้คืนได้
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                <a href="profile_db.php?action=delete_account" class="btn btn-danger">ลบบัญชี</a>
-            </div>
-        </div>
-    </div>
-</div>
+                <script>
+                    function confirmDelete(event) {
+                        event.preventDefault(); // ป้องกันการนำทางอัตโนมัติ
+                        if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีของคุณ? การลบจะไม่สามารถกู้คืนได้!")) {
+                            window.location.href = "profile_db.php?action=delete_account";
+                        }
+                    }
+                </script>
 
-<?php include 'layouts/footer.php'; ?>
+
+
+
+                <?php include 'layouts/footer.php'; ?>

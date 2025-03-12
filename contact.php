@@ -2,6 +2,8 @@
 
 <?php include 'layouts/header.php'; ?>
 
+<h2 class="mb-3">ติดต่อ</h2>
+
 
 <div class="container mt-4">
     <p>เบอร์โทร 082 9647541</p>

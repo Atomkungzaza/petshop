@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="container mt-5">
     <h2>แก้ไขข่าวสาร</h2>
 
-    <form action="news_edit.php?id=<?= $news_id; ?>" method="POST" enctype="multipart/form-data">
+    <form action="edit_news.php?id=<?= $news_id; ?>" method="POST" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="title" class="form-label">หัวข้อข่าวสาร</label>
             <input type="text" class="form-control" id="title" name="title" value="<?= htmlspecialchars($news['title']); ?>" required>

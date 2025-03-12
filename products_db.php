@@ -1,10 +1,8 @@
 <?php
-
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 require_once 'config/db.php';
-
 
 $category_id = isset($_GET['category_id']) ? intval($_GET['category_id']) : 0;
 

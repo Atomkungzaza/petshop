@@ -1,5 +1,8 @@
 <!-- โค้ดในไฟล์ order.php -->
 
+
+
+
 <?php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -8,7 +11,11 @@ require_once 'config/db.php';
 require_once 'orders_db.php'; // ✅ นำเข้าไฟล์ประมวลผล
 ?>
 
+
+
 <?php include 'layouts/header.php'; ?>
+
+<h2>คำสั่งซื้อ</h2>
 
 <div class="container mt-4">
     <?php if (isset($_SESSION['success'])): ?>
@@ -52,6 +59,8 @@ require_once 'orders_db.php'; // ✅ นำเข้าไฟล์ประม�
                                 <span class="badge bg-secondary"><?= htmlspecialchars($order['status']); ?></span>
                             <?php endif; ?>
                         </td>
+
+
 
 
                         <td><?= $order['created_at']; ?></td>

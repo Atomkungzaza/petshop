@@ -10,23 +10,11 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
     exit();
 }
 
-// ฟังก์ชันแปลงสถานะเป็นภาษาไทย
-function translateStatus($status) {
-    $statusMap = [
-        'pending' => 'รอดำเนินการ',
-        'processing' => 'กำลังดำเนินการ',
-        'shipped' => 'จัดส่งแล้ว',
-        'delivered' => 'จัดส่งสำเร็จ',
-        'cancelled' => 'ยกเลิกคำสั่งซื้อ'
-    ];
-    return $statusMap[$status] ?? 'ไม่ทราบสถานะ';
-}
-
 // รับหมายเลขคำสั่งซื้อจากแบบฟอร์ม
 $order_id = $_POST['order_id'] ?? '';
 
 // คำสั่ง SQL ดึงข้อมูลคำสั่งซื้อ
-$query = "SELECT id, status, total_price FROM orders";
+$query = "SELECT * FROM orders";
 if ($order_id) {
     $query .= " WHERE id = :order_id";
 }
@@ -59,9 +47,10 @@ $orders = $stmt->fetchAll();
 <body>
     <?php include 'layouts/header.php'; ?>
     
-    <div class="container">
+    <div class="container mt-4">
         <h2>จัดการคำสั่งซื้อ</h2>
 
+        <!-- ✅ ค้นหาคำสั่งซื้อ -->
         <form method="POST" action="admin_tracking.php" class="mb-3">
             <div class="input-group">
                 <input type="text" name="order_id" class="form-control" placeholder="กรุณากรอกหมายเลขคำสั่งซื้อ" value="<?= htmlspecialchars($order_id); ?>" required>
@@ -69,43 +58,59 @@ $orders = $stmt->fetchAll();
             </div>
         </form>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>หมายเลขคำสั่งซื้อ</th>
-                    <th>สถานะคำสั่งซื้อ</th>
-                    <th>ราคา</th>
-                    <th>การจัดการ</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if ($orders): ?>
-                    <?php foreach ($orders as $order): ?>
-                        <tr>
-                            <td><?= $order['id']; ?></td>
-                            <td><?= translateStatus($order['status']); ?></td>
-                            <td><?= number_format($order['total_price'], 2); ?></td>
-                            <td>
-                                <form method="POST" action="admin_tracking_db.php" class="d-inline">
-                                    <input type="hidden" name="id" value="<?= $order['id']; ?>">
-                                    <select name="status" class="form-select" required>
-                                        <option value="pending" <?= $order['status'] == 'pending' ? 'selected' : ''; ?>>รอดำเนินการ</option>
-                                        <option value="processing" <?= $order['status'] == 'processing' ? 'selected' : ''; ?>>กำลังดำเนินการ</option>
-                                        <option value="shipped" <?= $order['status'] == 'shipped' ? 'selected' : ''; ?>>จัดส่งแล้ว</option>
-                                        <option value="delivered" <?= $order['status'] == 'delivered' ? 'selected' : ''; ?>>จัดส่งสำเร็จ</option>
-                                        <option value="cancelled" <?= $order['status'] == 'cancelled' ? 'selected' : ''; ?>>ยกเลิกคำสั่งซื้อ</option>
-                                    </select>
-                                    <button type="submit" name="action" value="update" class="btn btn-warning btn-sm">อัปเดต</button>
-                                </form>
+        <?php if ($orders): ?>
+            <?php foreach ($orders as $order): ?>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5>หมายเลขคำสั่งซื้อ: <span class="text-primary">#<?= $order['id']; ?></span></h5>
+                            <p>ราคารวม: <strong><?= number_format($order['total_price'], 2); ?> บาท</strong></p>
+                        </div>
+
+                        <!-- ✅ Timeline Progress -->
+                        <ul class="timeline">
+                            <li class="timeline-item <?= ($order['status'] == 'paid') ? 'active' : (($order['status'] == 'processing' || $order['status'] == 'shipped' || $order['status'] == 'delivered') ? 'completed' : ''); ?>">
+                                <div class="circle"></div>
+                                <span>ชำระเงินแล้ว</span>
+                            </li>
+                            <li class="timeline-item <?= ($order['status'] == 'processing') ? 'active' : (($order['status'] == 'shipped' || $order['status'] == 'delivered') ? 'completed' : ''); ?>">
+                                <div class="circle"></div>
+                                <span>กำลังดำเนินการ</span>
+                            </li>
+                            <li class="timeline-item <?= ($order['status'] == 'shipped') ? 'active' : (($order['status'] == 'delivered') ? 'completed' : ''); ?>">
+                                <div class="circle"></div>
+                                <span>จัดส่งแล้ว</span>
+                            </li>
+                            <li class="timeline-item <?= ($order['status'] == 'delivered') ? 'active' : ''; ?>">
+                                <div class="circle"></div>
+                                <span>จัดส่งสำเร็จ</span>
+                            </li>
+                        </ul>
+
+                        <!-- ✅ ฟอร์มอัปเดตสถานะคำสั่งซื้อ -->
+                        <form method="POST" action="admin_tracking_db.php" class="mb-3">
+                            <input type="hidden" name="id" value="<?= $order['id']; ?>">
+                            <div class="mb-3">
+                                <label for="status" class="form-label">เลือกสถานะ</label>
+                                <select name="status" class="form-select" required>
+                                    <option value="paid" <?= $order['status'] == 'paid' ? 'selected' : ''; ?>>ชำระเงินแล้ว</option>
+                                    <option value="processing" <?= $order['status'] == 'processing' ? 'selected' : ''; ?>>กำลังดำเนินการ</option>
+                                    <option value="shipped" <?= $order['status'] == 'shipped' ? 'selected' : ''; ?>>จัดส่งแล้ว</option>
+                                    <option value="delivered" <?= $order['status'] == 'delivered' ? 'selected' : ''; ?>>จัดส่งสำเร็จ</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex justify-content-start">
+                                <button type="submit" name="action" value="update" class="btn btn-warning btn-sm me-2">อัปเดต</button>
                                 <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(<?= $order['id']; ?>)">ลบ</button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr><td colspan="4" class="text-center">ไม่พบข้อมูลคำสั่งซื้อ</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p class="text-center">ไม่พบข้อมูลคำสั่งซื้อ</p>
+        <?php endif; ?>
     </div>
 
     <?php include 'layouts/footer.php'; ?>

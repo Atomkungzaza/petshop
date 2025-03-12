@@ -20,7 +20,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php include 'layouts/header.php'; ?> <!-- ใช้ path ที่ถูกต้อง -->
 <div class="container mt-4">
-    <h2 class="mb-3">แก้ไขข้อมูลสมาชิก</h2>
+    <h2 class="mb-3">จัดการข้อมูลสมาชิก</h2>
 
     <table class="table">
         <thead>
